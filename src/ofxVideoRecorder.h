@@ -145,6 +145,19 @@ public:
     void setVideoBitrate(string bitrate) { videoBitrate = bitrate; }
     void setAudioBitrate(string bitrate) { audioBitrate = bitrate; }
 
+    void setColorRange(const string &range) {  // "limited" or "full"
+        colorRange = (range == "limited" || range == "full") ? range : "auto";
+    }
+
+    void setChromaLocation(const string &location) {  // "center" or "left"
+        chromaLocation =
+            (location == "center" || location == "left") ? location : "auto";
+    }
+
+    void setColorSpace(const string &space) {  // "bt709", "bt601" etc.
+        colorSpace = space;
+    }
+
     void setPixelFormat( string pixelF){ //rgb24 || gray, default is rgb24
         pixelFormat = pixelF;
     };
@@ -183,6 +196,10 @@ private:
     bool bIsPaused;
     bool bFinishing;
     bool bIsSilent;
+
+    string colorRange = "auto";
+    string chromaLocation = "auto";
+    string colorSpace = "bt709";
 
     bool bSysClockSync;
     float startTime;

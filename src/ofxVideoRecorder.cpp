@@ -313,6 +313,24 @@ bool ofxVideoRecorder::setupCustomOutput(int w, int h, float fps, int sampleRate
         }
     }
 
+    stringstream colorParams;
+    
+    if (colorRange != "auto") {
+        colorParams << " -color_range " << (colorRange == "full" ? "2" : "1");
+    }
+    
+    if (outputPixelFormat.find("420") != string::npos || 
+        outputPixelFormat.find("422") != string::npos) {
+        if (chromaLocation != "auto") {
+            colorParams << " -x264-params chromaloc=" 
+                        << (chromaLocation == "center" ? "1" : "0");
+        }
+    }
+    
+    colorParams << " -colorspace " << colorSpace
+                << " -color_primaries " << colorSpace
+                << " -color_trc " << colorSpace;
+
     stringstream cmd;
     // basic ffmpeg invocation, -y option overwrites output file
     cmd << "bash --login -c '" << ffmpegLocation << (bIsSilent?" -loglevel quiet ":" ") << "-y";
@@ -326,6 +344,7 @@ bool ofxVideoRecorder::setupCustomOutput(int w, int h, float fps, int sampleRate
         cmd << " -r "<< fps << " -s " << w << "x" << h << " -f rawvideo -pix_fmt " << pixelFormat <<" -i \"" << videoPipePath << "\" -r " << fps;
         if (outputPixelFormat.length() > 0)
             cmd << " -pix_fmt " << outputPixelFormat;
+        cmd << colorParams.str();
     }
     else { // no video stream
         cmd << " -vn";
